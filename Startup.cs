@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,45 @@ namespace ProductionGradeAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            // Swagger Setup
+            SetupSwagger(services);
+
+            // API Versioning
+            services.AddApiVersioning(config =>
+            {
+                // Specify the default API Version as 1.0
+                config.DefaultApiVersion = new ApiVersion(1, 0);
+                // If the client hasn't specified the API version in the request, use the default API version number 
+                config.AssumeDefaultVersionWhenUnspecified = true;
+            });
+
+        }
+
+        private void SetupSwagger(IServiceCollection services)
+        {
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "ProductionGrade API",
+                    Description = "A simple example ASP.NET Core Web API",
+                    TermsOfService = new Uri("https://example.com/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Fuad Hashim",
+                        Email = string.Empty,
+                        Url = new Uri("https://twitter.com/spboyer"),
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "Use under LICX",
+                        Url = new Uri("https://example.com/license"),
+                    }
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,6 +75,16 @@ namespace ProductionGradeAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.)
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            }
+            );
 
             app.UseHttpsRedirection();
 
