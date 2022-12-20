@@ -11,6 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using DLL.DBContext;
+using DLL;
+using BLL;
+using FluentValidation.AspNetCore;
 
 namespace ProductionGradeAPI
 {
@@ -26,7 +31,10 @@ namespace ProductionGradeAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+
+                // Fluent Validation
+                .AddFluentValidation();
 
             // Swagger Setup
             SetupSwagger(services);
@@ -39,6 +47,9 @@ namespace ProductionGradeAPI
                 // If the client hasn't specified the API version in the request, use the default API version number 
                 config.AssumeDefaultVersionWhenUnspecified = true;
             });
+
+            DLLDependency.AllDependency(services, Configuration);
+            BLLDependency.AllDependency(services, Configuration);
 
         }
 

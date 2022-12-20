@@ -1,48 +1,65 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ProductionGradeAPI.Models;
+using DLL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using DLL.Repositories;
+using System.Threading.Tasks;
+using BLL.Services;
+using BLL.Request;
 
 namespace ProductionGradeAPI.Controllers
 {
     
     public class DepartmentController : MainAPIController
     {
+        private readonly IDepartmentService _departmentService;
+
+        public DepartmentController(IDepartmentService departmentService)
+        {
+            _departmentService = departmentService;
+        }
+
     // Implement REST API with Basic Response   
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             //return Ok("Get All Department");
-            return Ok(DepartmentStatic.GetAllDepartment());
+            //return Ok(DepartmentStatic.GetAllDepartment());
+            //return Ok(await _departmentRepository.GetAllAsync());
+            return Ok(await _departmentService.GetAllAsync());
         }
 
         [HttpGet("{code}")]
-        public IActionResult GetA(string code)
+        public async Task<IActionResult> GetA(string code)
         {
             //return Ok("Get This " + code + " Department Data");
-            return Ok(DepartmentStatic.GEtADepartment(code));
+            //return Ok(DepartmentStatic.GEtADepartment(code));
+            return Ok(await _departmentService.GetAAsync(code));
         }
 
         [HttpPost]
-        public IActionResult Insert(Department department)
+        public async Task<IActionResult> Insert(DepartmentInsertRequestViewModel request)
         {
             //return Ok("Insert New Department");
-            return Ok(DepartmentStatic.InsertDepartment(department));
+            //return Ok(DepartmentStatic.InsertDepartment(department));
+            return Ok(await _departmentService.InsertAsync(request));
         }
 
         [HttpPut("{code}")]
-        public IActionResult Update(string code, Department department)
+        public async Task<IActionResult> Update(string code, Department department)
         {
             //return Ok("Update This " + code + " Department Data");
-            return Ok(DepartmentStatic.UpdateDepartment(code, department));
+            //return Ok(DepartmentStatic.UpdateDepartment(code, department));
+            return Ok(await _departmentService.UpdateAsync(code, department));
         }
 
         [HttpDelete("{code}")]
-        public IActionResult Delete(string code)
+        public async Task<IActionResult> Delete(string code)
         {
             //return Ok("Delete This " + code + " Department Data");
-            return Ok(DepartmentStatic.DeleteDepartment(code));
+            //return Ok(DepartmentStatic.DeleteDepartment(code));
+            return Ok(await _departmentService.DeleteAsync(code));
         }
        
     }
